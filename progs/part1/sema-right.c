@@ -24,6 +24,7 @@ int main() {
         sem_post(sem);
         wait(NULL);
         sem_destroy(sem);
+        shmdt(sem); //The given code forgot this lol
         shmctl(shmid, IPC_RMID, 0);
     }
     else

@@ -9,10 +9,22 @@
 int main() {
 
     int i, j, pid;
+
+    //* Creating shared var "turn" and setting it to 0
+    int* turn;
+    int shmId;
+
+    shmId = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0600);
+    turn = shmat(shmId, NULL, 0);
+
+    turn[0] = 0; //*turn = 0; also can
+    //*/
     
     for(i=0; i<NUM_PROCESSES; i++)
     {
         if((pid = fork()) == 0) {
+            while(turn[0] != i); //Busy waiting
+
             break;
         }
     }
@@ -27,10 +39,15 @@ int main() {
         }
 
         printf("\n\n");
+
+        turn[0] = turn[0] + 1; //(void)++(*turn); also can
     }
     else {
         for(i=0; i<NUM_PROCESSES; i++) 
             wait(NULL);
+
+        shmdt(turn); //Detach shm segment (located at specified address) from calling process's address space
+        shmctl(shmId, IPC_RMID, 0); //Free shm
     }
 
 }
