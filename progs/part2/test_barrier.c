@@ -21,7 +21,7 @@ int main() {
         // The children will all slip at different amounts of time
         sleep_time[i] = (int) (((float) rand() / RAND_MAX) * MAX_SLEEP);
         if((pid = fork()) == 0) {
-            srand(time(NULL));
+            srand(time(NULL)); //This is ptless lol
             break;
         }
     }
